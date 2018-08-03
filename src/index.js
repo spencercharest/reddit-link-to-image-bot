@@ -32,13 +32,51 @@ async function getPageContent(url) {
   };
 }
 
+function downloadImage(url) {
+  return axios({
+    method: 'GET',
+    url,
+    responseType: 'arraybuffer',
+  })
+    .then(res => res.data);
+}
+
+async function processPage(page, chatId) {
+  const { title, image } = page;
+
+  if (image) {
+    await bot.sendMessage(chatId, title);
+
+    const file = await downloadImage(image);
+
+    bot.sendPhoto(chatId, file);
+  }
+}
+
 bot.on('message', async (msg) => {
-  const { text } = msg;
+  const { text, chat } = msg;
+  const { id } = chat;
   // only run for reddit posts
   if (text.includes('reddit.com')) {
-    // get link urls from text
-    const linkURLs = getLinkURLs(text);
-    // get page content
-    const content = await Promise.map(linkURLs, url => getPageContent(url));
+    try {
+      // get link urls from text
+      const linkURLs = getLinkURLs(text);
+      // get page content
+      const pages = await Promise.map(linkURLs, url => getPageContent(url));
+      // determine if any of the posts have images
+      const haveImages = pages.some(page => Boolean(page.image));
+
+      if (haveImages) {
+      // send a message to troll matt
+        await bot.sendMessage(
+          id,
+          'I see you linked to a Reddit image post instead of just sending the image. Don\'t do that. Don\'t be like Matt. Let me help you out with that.',
+        );
+
+        await Promise.map(pages, page => processPage(page, id), { concurrency: 1 });
+      }
+    } catch (e) {
+      console.error(e);
+    }
   }
 });
