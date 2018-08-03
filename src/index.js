@@ -23,7 +23,7 @@ async function getPageContent(url) {
   // load into cheerio
   const $ = cheerio.load(data);
   // get image source and post title
-  const image = $('img').attr('src');
+  const image = $('.media-element').attr('src');
   const title = $('h2').text();
 
   return {
