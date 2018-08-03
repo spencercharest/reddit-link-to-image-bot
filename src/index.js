@@ -49,7 +49,7 @@ async function processPage(page, chatId) {
 
     const file = await downloadImage(image);
 
-    bot.sendPhoto(chatId, file);
+    await bot.sendPhoto(chatId, file);
   }
 }
 
