@@ -1,0 +1,29 @@
+{
+  "name": "reddit-link-to-image-bot",
+  "version": "1.0.0",
+  "description": "A bot to get images from a Reddit link posted to Telegram.",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "babel -d dist/ src/",
+    "start": "node dist/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "telegram",
+    "reddit"
+  ],
+  "author": "Spencer Charest",
+  "license": "ISC",
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-env": "^1.7.0",
+    "eslint": "^4.19.1",
+    "eslint-config-airbnb": "^17.0.0",
+    "eslint-plugin-import": "^2.13.0",
+    "eslint-plugin-jsx-a11y": "^6.1.1",
+    "eslint-plugin-react": "^7.10.0"
+  },
+  "dependencies": {
+    "dotenv": "^6.0.0"
+  }
+}
