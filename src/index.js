@@ -1,12 +1,12 @@
 import Promise from 'bluebird';
 import TelegramBot from 'node-telegram-bot-api';
 import axios from 'axios';
-import cheerio from 'cheerio';
+import puppeteer from 'puppeteer';
 import dotenv from 'dotenv';
 import path from 'path';
 
 dotenv.config({
-  path: path.join(__dirname, '../.env'),
+  path: path.join(__dirname, '../.env')
 });
 
 const token = process.env.TOKEN;
@@ -18,17 +18,28 @@ function getLinkURLs(text) {
 }
 
 async function getPageContent(url) {
-  // get html
-  const { data } = await axios.get(url);
-  // load into cheerio
-  const $ = cheerio.load(data);
-  // get image source and post title
-  const image = $('.media-element').attr('src');
-  const title = $('h2').text();
+  const browser = await puppeteer.launch({ headless: true });
+  const page = await browser.newPage();
+  await page.goto(url);
+
+  const image = await page.evaluate(() =>
+    document.querySelector('.media-element').getAttribute('src')
+  );
+
+  const title = await page.evaluate(
+    () => document.querySelector('h1').innerText
+  );
+
+  if (image) {
+    const imagePage = await browser.newPage();
+    await imagePage.goto(image);
+  }
+
+  await browser.close();
 
   return {
     title,
-    image,
+    image
   };
 }
 
@@ -36,9 +47,8 @@ function downloadImage(url) {
   return axios({
     method: 'GET',
     url,
-    responseType: 'arraybuffer',
-  })
-    .then(res => res.data);
+    responseType: 'arraybuffer'
+  }).then(res => res.data);
 }
 
 async function processPage(page, chatId) {
@@ -53,7 +63,7 @@ async function processPage(page, chatId) {
   }
 }
 
-bot.on('message', async (msg) => {
+bot.on('message', async msg => {
   const { text, chat } = msg;
   const { id } = chat;
   // only run for reddit posts
@@ -67,13 +77,9 @@ bot.on('message', async (msg) => {
       const haveImages = pages.some(page => Boolean(page.image));
 
       if (haveImages) {
-      // send a message to troll matt
-        await bot.sendMessage(
-          id,
-          'I see you linked to a Reddit image post instead of just sending the image. Don\'t do that. Don\'t be like Matt. Let me help you out with that.',
-        );
-
-        await Promise.map(pages, page => processPage(page, id), { concurrency: 1 });
+        await Promise.map(pages, page => processPage(page, id), {
+          concurrency: 1
+        });
       }
     } catch (e) {
       console.error(e);
