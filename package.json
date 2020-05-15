@@ -4,9 +4,8 @@
   "description": "A bot to get images from a Reddit link posted to Telegram.",
   "main": "dist/index.js",
   "scripts": {
-    "build": "babel -d dist/ src/",
-    "dev": "nodemon --exec babel-node src/index.js",
-    "start": "node dist/index.js",
+    "build": "tsc",
+    "start": "ts-node --files src/index.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
@@ -16,20 +15,23 @@
   "author": "Spencer Charest",
   "license": "ISC",
   "devDependencies": {
-    "babel-cli": "^6.26.0",
-    "babel-preset-env": "^1.7.0",
-    "eslint": "^4.19.1",
-    "eslint-config-airbnb": "^17.0.0",
-    "eslint-plugin-import": "^2.13.0",
-    "eslint-plugin-jsx-a11y": "^6.1.1",
-    "eslint-plugin-react": "^7.10.0",
-    "nodemon": "^1.18.3"
+    "@types/axios": "^0.14.0",
+    "@types/dotenv": "^8.2.0",
+    "@types/node": "^14.0.1",
+    "@types/node-telegram-bot-api": "^0.40.3",
+    "@typescript-eslint/eslint-plugin": "^2.33.0",
+    "@typescript-eslint/parser": "^2.33.0",
+    "eslint": "^7.0.0",
+    "eslint-config-prettier": "^6.11.0",
+    "eslint-plugin-prettier": "^3.1.3",
+    "prettier": "^2.0.5",
+    "ts-node": "^8.10.1",
+    "typescript": "^3.9.2"
   },
   "dependencies": {
-    "axios": "^0.18.0",
-    "bluebird": "^3.5.1",
-    "dotenv": "^6.0.0",
-    "node-telegram-bot-api": "^0.30.0",
-    "puppeteer": "^1.20.0"
+    "axios": "^0.19.2",
+    "dotenv": "^8.2.0",
+    "node-telegram-bot-api": "^0.50.0",
+    "unescape": "^1.0.1"
   }
 }
